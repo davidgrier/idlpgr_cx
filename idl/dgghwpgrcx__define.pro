@@ -92,9 +92,9 @@ end
 
 ;;;;;
 ;
-; DGGhwPGRcx::GetPGRPropertyInfo
+; DGGhwPGRcx::PropertyInfo
 ;
-function DGGhwPGRcx::GetPGRPropertyInfo, type
+function DGGhwPGRcx::PropertyInfo, property
 
   COMPILE_OPT IDL2, HIDDEN
 
@@ -109,11 +109,16 @@ function DGGhwPGRcx::GetPGRPropertyInfo, type
   max = 0UL
   absmin = 0.
   absmax = 0.
-  error = call_external(self.dlm, 'pgr_getpropertyinfo', type, $
-                        present, autosupported, manualsupported, $
-                        onoffsupported, onepushsupported, $
-                        absvalsupported, readoutsupported, $
-                        min, max, absmin, absmax)
+
+  if self.properties.haskey(property) then begin
+     type = self.properties[property]
+     error = call_external(self.dlm, 'pgr_getpropertyinfo', long(type), $
+                           present, autosupported, manualsupported, $
+                           onoffsupported, onepushsupported, $
+                           absvalsupported, readoutsupported, $
+                           min, max, absmin, absmax)
+  endif
+
   return, {present:present, $
            autosupported:autosupported, $
            manualsupported:manualsupported, $
