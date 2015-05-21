@@ -160,6 +160,39 @@ end
 
 ;;;;;
 ;
+; DGGhwPGRcx::SetProperty
+;
+pro DGGhwPGRcx::SetProperty, _ref_extra = propertylist
+
+  COMPILE_OPT IDL2, HIDDEN
+
+  if isa(propertylist) then begin
+     foreach name,  strlowcase(propertylist) do begin
+        if self.properties.haskey(name) then begin
+           type = self.properties[name]
+           info = self.getPGRpropertyinfo(type)
+           if ~info.present then $
+              continue
+           if info.absvalsupported then begin
+              absvalue = 1L
+              value = float(scope_varfetch(name, /ref_extra))
+              value >= info.absmin
+              value <= info.absmax
+           endif else begin
+              absvalue = 0L
+              value = long(scope_varfetch(name, /ref_extra))
+              value >= info.min
+              value <= info.max
+           endelse
+           error = call_external(self.dlm, 'pgr_setproperty', $
+                                 type, value, absvalue)
+        endif
+      endforeach
+   endif
+end
+
+;;;;;
+;
 ; DGGhwPGRcx::Init()
 ;
 ; Initialize FlyCapture2_C library, connect to camera

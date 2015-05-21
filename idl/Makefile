@@ -12,7 +12,8 @@ DESTINATION = pro
 FILES = open_pgrcx.pro \
         close_pgrcx.pro \
         read_pgrcx.pro \
-        dgghwpgrcx__define.pro
+        dgghwpgrcx__define.pro \
+	dgggrpgrcx__define.pro
 
 all:
 

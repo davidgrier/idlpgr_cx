@@ -162,8 +162,28 @@ IDL_INT IDL_CDECL pgr_getpropertyinfo(int argc, char *argv[])
 
   return (IDL_INT) error;
 }
-// Really all we care about is gain, exposure time and frame rate
 
 //
 // PGR_SETPROPERTY
 //
+// argv[0]: IN type
+// argv[1]: IN value
+// argv[2]: IN absControl
+//
+IDL_INT IDL_CDECL pgr_setproperty(int argc, char *argv[])
+{
+  fc2Error error;
+  fc2Property property;
+  
+  property.type = (fc2PropertyType) * (IDL_LONG *) argv[0];
+  error = fc2GetProperty(context, &property);
+  if (property.absControl = (BOOL) * (IDL_LONG *) argv[2]) {
+    property.absValue = * (float *) argv[1];
+  } else {
+    property.valueA = * (IDL_ULONG *) argv[1];
+  }
+  property.autoManualMode = 0;
+  error = fc2SetProperty(context, &property);
+
+  return (IDL_INT) error;
+}
