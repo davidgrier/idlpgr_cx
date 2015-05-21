@@ -15,7 +15,13 @@ project_directory = './'
 compile_directory = './build'
 infiles = 'idlpgr_cx'
 outfile = 'idlpgr_cx'
-ern = ['pgr_open', 'pgr_close', 'pgr_read']
+ern = ['pgr_open', $
+       'pgr_close', $
+       'pgr_read', $
+       'pgr_getproperty', $
+       'pgr_getpropertyinfo', $
+       'pgr_setproperty', $
+       'pgr_controlproperty']
 
 extra_cflags = '-I/usr/include/flycapture'
 extra_lflags = '-lflycapture-c -lflycapture'

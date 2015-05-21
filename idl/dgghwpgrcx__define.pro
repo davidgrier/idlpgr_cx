@@ -123,6 +123,7 @@ function DGGhwPGRcx::PropertyInfo, property
            autosupported:autosupported, $
            manualsupported:manualsupported, $
            onoffsupported:onoffsupported, $
+           onepushsupported:onepushsupported, $
            absvalsupported:absvalsupported, $
            readoutsupported:readoutsupported, $
            min:min, max:max, $
@@ -174,8 +175,7 @@ pro DGGhwPGRcx::SetProperty, _ref_extra = propertylist
   if isa(propertylist) then begin
      foreach name,  strlowcase(propertylist) do begin
         if self.properties.haskey(name) then begin
-           type = self.properties[name]
-           info = self.getPGRpropertyinfo(type)
+           info = self.propertyinfo(name)
            if ~info.present then $
               continue
            if info.absvalsupported then begin
@@ -189,6 +189,7 @@ pro DGGhwPGRcx::SetProperty, _ref_extra = propertylist
               value >= info.min
               value <= info.max
            endelse
+           type = self.properties[name]
            error = call_external(self.dlm, 'pgr_setproperty', $
                                  type, value, absvalue)
         endif
@@ -196,6 +197,52 @@ pro DGGhwPGRcx::SetProperty, _ref_extra = propertylist
    endif
 end
 
+;;;;;
+;
+; DGGhwPGRcx::ControlProperty
+;
+pro DGGhwPGRcx::ControlProperty, property, $
+                                 on = on, $
+                                 off = off, $
+                                 auto = auto, $
+                                 manual = manual, $
+                                 onepush = onepush
+
+  COMPILE_OPT IDL2, HIDDEN
+
+  if n_params() ne 1 then $
+     return
+
+  if ~self.properties.haskey(property) then $
+     return
+
+  type = self.properties[property]
+
+  info = self.propertyinfo(property)
+
+  onOff = -1L
+  autoManual = -1L
+  onePush = -1L
+
+  if isa(on, /number, /scalar) && info.onoffsupported then $
+     onOff = ~keyword_set(on)
+
+  if isa(off, /number, /scalar) && info.onoffsupported then $
+     onOff = keyword_set(off)
+
+  if isa(auto, /number, /scalar) && info.autosupported then $
+     autoManual = keyword_set(auto)
+
+  if isa(manual, /number, /scalar) && info.autosupported then $
+     autoManual = ~keyword_set(manual)
+
+  if isa(onepush, /number, /scalar) && info.onepushsupported then $
+     onePush = 1L
+
+  error = call_external(self.dlm, 'pgr_controlproperty', type, $
+                        onOff, autoManual, onePush)
+end
+  
 ;;;;;
 ;
 ; DGGhwPGRcx::Init()

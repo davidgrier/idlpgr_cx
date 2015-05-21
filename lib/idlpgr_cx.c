@@ -187,3 +187,34 @@ IDL_INT IDL_CDECL pgr_setproperty(int argc, char *argv[])
 
   return (IDL_INT) error;
 }
+
+//
+// PGR_CONTROLPROPERTY
+//
+// argv[0]: IN type
+// argv[1]: IN onOff
+// argv[2]: IN autoManual
+// argv[3]: IN onepush
+//
+IDL_INT IDL_CDECL pgr_controlproperty(int argc, char *argv[])
+{
+  fc2Error error;
+  fc2Property property;
+
+  property.type = (fc2PropertyType) * (IDL_LONG *) argv[0];
+  error = fc2GetProperty(context, &property);
+
+  if (*argv[1] >= 0)
+    property.onOff = (BOOL) * (IDL_LONG *) argv[1];
+
+  if (*argv[2] >= 0)
+    property.autoManualMode = (BOOL) * (IDL_LONG *) argv[2];
+
+  if (*argv[3] >= 0)
+    property.onePush = (BOOL) * (IDL_LONG *) argv[3];
+
+  error = fc2SetProperty(context, &property);
+
+  return (IDL_INT) error;
+}
+  
