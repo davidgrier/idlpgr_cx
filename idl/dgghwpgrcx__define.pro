@@ -18,7 +18,7 @@
 ;
 ;    data  [ G ] [nx, ny] array of byte-valued data
 ;    
-;    gray  [ G ] Flag: grayscale if set
+; [ G ] grayscale: flag: grayscale if set
 ;
 ; METHODS:
 ;    GetProperty
@@ -67,12 +67,12 @@ end
 ;
 pro DGGhwPGRcx::GetProperty, data = data, $
                              dim = dim, $
-                             gray = gray
+                             grayscale = grayscale
   COMPILE_OPT IDL2, HIDDEN
 
   if arg_present(data) then data = *self._data
   if arg_present(dim) then dim = self.dim
-  if arg_present(gray) then gray = self.gray
+  if arg_present(grayscale) then grayscale = self.grayscale
 end
 
 ;;;;;
@@ -93,7 +93,7 @@ function DGGhwPGRcx::Init
      return, 0B
 
   self.dim = [nx, ny]
-  self.gray = 1B
+  self.grayscale = 1L
 
   data = bytarr(nx, ny)
   self._data = ptr_new(data, /no_copy)
@@ -131,6 +131,6 @@ pro DGGhwPGRcx__define
             dlm: '', $
             dim: [0, 0], $
             _data: ptr_new(), $
-            gray: 0B $
+            grayscale: 1L $
            }
 end
