@@ -63,16 +63,59 @@ end
 
 ;;;;;
 ;
+; DGGhwPGRcx::GetPGRProperty()
+;
+function DGGhwPGRcx::GetPGRProperty, type
+
+  COMPILE_OPT IDL2, HIDDEN
+
+  present = 0L
+  abscontrol = 0L
+  onepush = 0L
+  onoff = 0L
+  automanual = 0L
+  valueA = 0UL
+  valueB = 0UL
+  absvalue = 0.
+  error = call_external(self.dlm, 'pgr_getproperty', type, $
+                        present, abscontrol, onepush, onoff, automanual, $
+                        valueA, valueB, absvalue)
+  return, {present:present, $
+           abscontrol:abscontrol, $
+           onepush:onepush, $
+           onoff:onoff, $
+           automanual:automanual, $
+           valueA:valueA, $
+           valueB:valueB, $
+           absvalue:absvalue}
+end
+
+;;;;;
+;
 ; DGGhwPGRcx::GetProperty
 ;
 pro DGGhwPGRcx::GetProperty, data = data, $
                              dim = dim, $
-                             grayscale = grayscale
+                             grayscale = grayscale, $
+                             _ref_extra = propertylist
   COMPILE_OPT IDL2, HIDDEN
 
   if arg_present(data) then data = *self._data
   if arg_present(dim) then dim = self.dim
   if arg_present(grayscale) then grayscale = self.grayscale
+  
+  if isa(propertylist) then begin
+     foreach name, strlowcase(propertylist) do begin
+        if self.properties.haskey(name) then begin
+           type = self.properties[name]
+           info = self.getpgrproperty(type)
+           (scope_varfetch(name, /ref_extra)) = (info.present) ? $
+                                                ((info.abscontrol) ? $
+                                                 info.absvalue : $
+                                                 info.valueA) : 0
+        endif
+      endforeach
+   endif
 end
 
 ;;;;;
@@ -94,6 +137,27 @@ function DGGhwPGRcx::Init
 
   self.dim = [nx, ny]
   self.grayscale = 1L
+
+  properties = ['brightness',    $
+                'auto_exposure', $
+                'sharpness',     $
+                'white_balance', $
+                'hue',           $
+                'saturation',    $
+                'gamma',         $
+                'iris',          $
+                'focus',         $
+                'zoom',          $
+                'pan',           $
+                'tilt',          $
+                'shutter',       $
+                'gain',          $
+                'trigger_mode',  $
+                'trigger_delay', $
+                'frame_rate',    $
+                'temperature']
+  indexes = indgen(n_elements(properties))
+  self.properties = orderedhash(properties, indexes)
 
   data = bytarr(nx, ny)
   self._data = ptr_new(data, /no_copy)
@@ -131,6 +195,7 @@ pro DGGhwPGRcx__define
             dlm: '', $
             dim: [0, 0], $
             _data: ptr_new(), $
-            grayscale: 1L $
+            grayscale: 1L, $
+            properties: obj_new() $
            }
 end

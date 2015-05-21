@@ -92,10 +92,41 @@ IDL_INT IDL_CDECL pgr_read(int argc, char *argv[])
   return (IDL_INT) error;
 }
 
-// Really all we care about is gain, exposure time and frame rate
 //
 // PGR_GETPROPERTY
 //
+// Described in /usr/include/flycapture/C/FlyCapture2Defs_C.h
+//
+// argv[0]: IN property type
+// argv[1]: OUT present
+// argv[2]: OUT absControl
+// argv[3]: OUT onePush
+// argv[4]: OUT onOff
+// argv[5]: OUT autoManualMode
+// argv[6]: OUT valueA
+// argv[7]: OUT valueB
+// argv[8]: OUT absValue
+//
+IDL_INT IDL_CDECL pgr_getproperty(int argc, char *argv[])
+{
+  fc2Error error;
+  fc2Property property;
+
+  property.type = (fc2PropertyType) * (IDL_LONG *) argv[0];
+  error = fc2GetProperty(context, &property);
+  *(IDL_LONG *) argv[1] = (IDL_LONG) property.present;
+  *(IDL_LONG *) argv[2] = (IDL_LONG) property.absControl;
+  *(IDL_LONG *) argv[3] = (IDL_LONG) property.onePush;
+  *(IDL_LONG *) argv[4] = (IDL_LONG) property.onOff;
+  *(IDL_LONG *) argv[5] = (IDL_LONG) property.autoManualMode;
+  *(IDL_ULONG *) argv[6] = (IDL_ULONG) property.valueA;
+  *(IDL_ULONG *) argv[7] = (IDL_ULONG) property.valueB;
+  *(float *) argv[8] = property.absValue;
+
+  return (IDL_INT) error;
+}
+
+// Really all we care about is gain, exposure time and frame rate
 
 //
 // PGR_SETPROPERTY
