@@ -92,17 +92,57 @@ end
 
 ;;;;;
 ;
+; DGGhwPGRcx::GetPGRPropertyInfo
+;
+function DGGhwPGRcx::GetPGRPropertyInfo, type
+
+  COMPILE_OPT IDL2, HIDDEN
+
+  present = 0L
+  autosupported = 0L
+  manualsupported = 0L
+  onoffsupported = 0L
+  onepushsupported = 0L
+  absvalsupported = 0L
+  readoutsupported = 0L
+  min = 0UL
+  max = 0UL
+  absmin = 0.
+  absmax = 0.
+  error = call_external(self.dlm, 'pgr_getpropertyinfo', type, $
+                        present, autosupported, manualsupported, $
+                        onoffsupported, onepushsupported, $
+                        absvalsupported, readoutsupported, $
+                        min, max, absmin, absmax)
+  return, {present:present, $
+           autosupported:autosupported, $
+           manualsupported:manualsupported, $
+           onoffsupported:onoffsupported, $
+           absvalsupported:absvalsupported, $
+           readoutsupported:readoutsupported, $
+           min:min, max:max, $
+           absmin:absmin, absmax:absmax}
+end
+
+;;;;;
+;
 ; DGGhwPGRcx::GetProperty
 ;
-pro DGGhwPGRcx::GetProperty, data = data, $
+pro DGGhwPGRcx::GetProperty, properties = properties, $
+                             data = data, $
                              dim = dim, $
                              grayscale = grayscale, $
                              _ref_extra = propertylist
   COMPILE_OPT IDL2, HIDDEN
 
-  if arg_present(data) then data = *self._data
-  if arg_present(dim) then dim = self.dim
-  if arg_present(grayscale) then grayscale = self.grayscale
+  if arg_present(data) then $
+     data = *self._data
+  if arg_present(dim) then $
+     dim = self.dim
+  if arg_present(grayscale) then $
+     grayscale = self.grayscale
+  if arg_present(properties) then $
+     properties = self.properties.keys()
   
   if isa(propertylist) then begin
      foreach name, strlowcase(propertylist) do begin

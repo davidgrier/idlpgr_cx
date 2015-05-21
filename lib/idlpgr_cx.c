@@ -126,6 +126,42 @@ IDL_INT IDL_CDECL pgr_getproperty(int argc, char *argv[])
   return (IDL_INT) error;
 }
 
+//
+// PGR_GETPROPERTYINFO
+//
+// argv[0]: IN property type
+// argv[1]: OUT present
+// argv[2]: OUT autosupported
+// argv[3]: OUT manualsupported
+// argv[4]: OUT onoffsupported
+// argv[5]: OUT onepushsupported
+// argv[6]: OUT readoutsupported
+// argv[7]: OUT MIN
+// argv[8]: OUT MAX
+// argv[9]: OUT ABSMIN
+// argv[10]: OUT ABSMAX
+//
+IDL_INT IDL_CDECL pgr_getpropertyinfo(int argc, char *argv[])
+{
+  fc2Error error;
+  fc2PropertyInfo info;
+
+  info.type = (fc2PropertyType) * (IDL_LONG *) argv[0];
+  error = fc2GetPropertyInfo(context, &info);
+  *(IDL_LONG *) argv[1] = (IDL_LONG) info.present;
+  *(IDL_LONG *) argv[2] = (IDL_LONG) info.autoSupported;
+  *(IDL_LONG *) argv[3] = (IDL_LONG) info.manualSupported;
+  *(IDL_LONG *) argv[4] = (IDL_LONG) info.onOffSupported;
+  *(IDL_LONG *) argv[5] = (IDL_LONG) info.onePushSupported;
+  *(IDL_LONG *) argv[6] = (IDL_LONG) info.absValSupported;
+  *(IDL_LONG *) argv[7] = (IDL_LONG) info.readOutSupported;
+  *(IDL_ULONG *) argv[8] = (IDL_ULONG) info.min;
+  *(IDL_ULONG *) argv[9] = (IDL_ULONG) info.max;
+  *(float *) argv[10] = info.absMin;
+  *(float *) argv[11] = info.absMax;
+
+  return (IDL_INT) error;
+}
 // Really all we care about is gain, exposure time and frame rate
 
 //
